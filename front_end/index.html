@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بيع واشتري بعيد عن الدائري</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+
+        <a href="index.html" class="logo">
+            <img src="images/logo.png" alt="عقاري">
+        </a>
+
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#properties">Properties</a>
+
+            <!-- ROLE LINKS (shown by script.js) -->
+            <a href="#my-requests-section" id="nav-my-requests" class="role-link" style="display: none;">My Purchase Requests</a>
+            <a href="#properties" id="nav-my-properties" class="role-link" style="display: none;" onclick="showMyProperties()">My Properties</a>
+            <a href="#owner-requests-section" id="nav-owner-requests" class="role-link" style="display: none;">Purchase Requests</a>
+            <a href="#users-section" id="nav-users" class="role-link" style="display: none;">Users</a>
+
+            <a href="#contact">Contact</a>
+        </div>
+
+        <!-- NOTIFICATION BELL (logged-in users only) -->
+        <button class="notification-bell" id="notification-bell" style="display: none;" title="New messages" onclick="openChat()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="bell-count" id="bell-count" style="display: none;">0</span>
+        </button>
+
+        <div class="auth-section">
+            <button class="login-btn" onclick="showLoginForm()">Login</button>
+            <button class="register-btn" onclick="showRegisterForm()">Register</button>
+        </div>
+
+    </nav>
+
+
+    <!-- LOGIN FORM -->
+    <div class="auth-form" id="login-form" style="display: none;">
+        <div class="auth-form-content">
+            <button class="close-auth-btn" onclick="closeAuthForms()">×</button>
+            <h2>Welcome Back</h2>
+            <p>Login to your ZIZO ESTATES account.</p>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-password" placeholder="Password">
+            <button class="auth-submit-btn" onclick="loginUser()">Login</button>
+            <p class="auth-switch" onclick="showRegisterForm()">Don't have an account? Register</p>
+        </div>
+    </div>
+
+
+    <!-- REGISTER FORM -->
+    <div class="auth-form" id="register-form" style="display: none;">
+        <div class="auth-form-content">
+            <button class="close-auth-btn" onclick="closeAuthForms()">×</button>
+            <h2>Create Account</h2>
+            <p>Create your ZIZO ESTATES account.</p>
+            <input type="text" id="register-name" placeholder="Full Name">
+            <input type="email" id="register-email" placeholder="Email">
+            <input type="password" id="register-password" placeholder="Password">
+            <button class="auth-submit-btn" onclick="registerUser()">Register</button>
+            <p class="auth-switch" onclick="showLoginForm()">Already have an account? Login</p>
+        </div>
+    </div>
+
+
+    <!-- PROPERTY DETAILS MODAL -->
+    <div class="auth-form" id="property-modal" style="display: none;">
+
+        <div class="auth-form-content property-modal-content">
+
+            <button class="close-auth-btn" onclick="closePropertyModal()">×</button>
+
+            <!-- IMAGES GALLERY -->
+            <div class="modal-gallery" id="modal-property-gallery" style="display: none;">
+                <img id="modal-gallery-main" class="modal-gallery-main" src="" alt="Property image">
+                <div id="modal-gallery-thumbs" class="modal-gallery-thumbs"></div>
+            </div>
+
+            <h2 id="modal-property-title"></h2>
+
+            <span id="modal-property-status" class="status-badge" style="display: none;"></span>
+
+            <p id="modal-property-location"></p>
+            <p id="modal-property-price"></p>
+            <p id="modal-property-type"></p>
+            <p id="modal-property-phone"></p>
+            <p id="modal-property-rating"></p>
+
+            <!-- BEDROOMS / BATHROOMS / AREA -->
+            <div class="modal-details" id="modal-property-details" style="display: none;"></div>
+
+            <p id="modal-property-description" style="display: none;"></p>
+
+            <p id="modal-property-owner"></p>
+
+            <button class="auth-submit-btn modal-chat-btn" id="modal-chat-btn" style="display: none;">Message Owner</button>
+
+            <button class="auth-submit-btn" id="modal-request-btn" style="display: none;">Request to Buy</button>
+
+        </div>
+
+    </div>
+
+
+    <!-- OWNER RATINGS MODAL -->
+    <div class="auth-form" id="ratings-modal" style="display: none;">
+        <div class="auth-form-content property-modal-content">
+            <button class="close-auth-btn" onclick="closeRatingsModal()">×</button>
+            <h2 id="ratings-title"></h2>
+            <p id="ratings-summary"></p>
+            <div id="ratings-list"></div>
+        </div>
+    </div>
+
+
+    <!-- CHAT MODAL -->
+    <div class="auth-form" id="chat-modal" style="display: none;">
+
+        <div class="auth-form-content chat-modal-content">
+
+            <button class="close-auth-btn" onclick="closeChat()">×</button>
+
+            <h2>Messages</h2>
+
+            <div class="chat-layout">
+
+                <div class="chat-sidebar" id="chat-conversations"></div>
+
+                <div class="chat-main" id="chat-main">
+
+                    <div class="chat-empty" id="chat-empty">Select a conversation to start chatting.</div>
+
+                    <div class="chat-thread" id="chat-thread" style="display: none;">
+
+                        <div class="chat-header">
+                            <button class="chat-back-btn" onclick="showConversationList()">‹</button>
+                            <div>
+                                <h3 id="chat-with-name"></h3>
+                                <p id="chat-with-property"></p>
+                            </div>
+                        </div>
+
+                        <div class="chat-messages" id="chat-messages"></div>
+
+                        <div class="chat-input-row">
+                            <input type="text" id="chat-input" maxlength="2000" placeholder="Type a message...">
+                            <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()">Send</button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+
+            <h1 style="color: #b89b5e;">
+                FIND YOUR,<br><span style="color: #ffffff;">NEXT HOME</span>
+            </h1>
+
+            <button class="hero-btn" onclick="document.getElementById('properties').scrollIntoView({ behavior: 'smooth' });">Explore Properties</button>
+
+        </div>
+    </section>
+
+
+    <!-- PROPERTIES -->
+    <section id="properties" class="properties-section">
+
+        <div class="section-title">
+
+            <p>OUR COLLECTION</p>
+
+            <h2>Featured Properties</h2>
+
+            <!-- PROPERTIES FILTERS -->
+            <div class="filters-bar">
+
+                <select id="filter-governorate">
+                    <option value="">All Governorates</option>
+                </select>
+
+                <select id="filter-type">
+                    <option value="">All Types</option>
+                </select>
+
+                <input type="number" id="filter-min-price" min="0" placeholder="Min Price">
+
+                <input type="number" id="filter-max-price" min="0" placeholder="Max Price">
+
+                <select id="filter-bedrooms">
+                    <option value="">Bedrooms: Any</option>
+                    <option value="1">1+ Bedrooms</option>
+                    <option value="2">2+ Bedrooms</option>
+                    <option value="3">3+ Bedrooms</option>
+                    <option value="4">4+ Bedrooms</option>
+                    <option value="5">5+ Bedrooms</option>
+                </select>
+
+                <select id="filter-bathrooms">
+                    <option value="">Bathrooms: Any</option>
+                    <option value="1">1+ Bathrooms</option>
+                    <option value="2">2+ Bathrooms</option>
+                    <option value="3">3+ Bathrooms</option>
+                    <option value="4">4+ Bathrooms</option>
+                </select>
+
+                <button class="filter-apply-btn" onclick="applyFilters()">Apply Filters</button>
+
+                <button class="filter-reset-btn" onclick="resetFilters()">Reset Filters</button>
+
+            </div>
+
+
+            <!-- ALL / MY PROPERTIES -->
+            <div class="properties-filter" id="properties-filter" style="display: none;">
+                <button class="filter-btn active" id="filter-all-btn" onclick="showAllProperties()">All Properties</button>
+                <button class="filter-btn" id="filter-mine-btn" onclick="showMyProperties()">My Properties</button>
+            </div>
+
+
+            <!-- ADD PROPERTY BUTTON -->
+            <button class="add-property-btn" id="add-property-button" style="display: none;" onclick="showAddForm()">+ Add Property</button>
+
+
+            <!-- ADD PROPERTY FORM -->
+            <div class="add-property-form" id="add-property-form" style="display: none;">
+
+                <input type="text" id="property-title" placeholder="Property Title">
+
+                <select id="property-governorate">
+                    <option value="">Select Governorate</option>
+                </select>
+
+                <select id="property-type">
+                    <option value="">Select Property Type</option>
+                </select>
+
+                <input type="text" id="property-location" placeholder="Detailed Location (area, street...)">
+
+                <input type="number" id="property-price" placeholder="Price">
+
+                <input type="tel" id="property-phone" placeholder="Mobile (e.g. 01012345678)">
+
+
+                <!-- OPTIONAL DETAILS -->
+                <input type="number" id="property-bedrooms" min="0" placeholder="Bedrooms (optional)">
+
+                <input type="number" id="property-bathrooms" min="0" placeholder="Bathrooms (optional)">
+
+                <input type="number" id="property-area" min="0" placeholder="Area in m² (optional)">
+
+                <textarea id="property-description" rows="3" maxlength="2000" placeholder="Description (optional)"></textarea>
+
+
+                <!-- IMAGES -->
+                <p class="form-hint">Images (optional): up to 5 per upload, JPG / PNG / WEBP, max 5MB each.</p>
+
+                <input type="file" id="property-images" accept="image/jpeg,image/png,image/webp" multiple onchange="previewSelectedImages(this)">
+
+                <div class="images-preview" id="property-images-preview"></div>
+
+                <button onclick="submitProperty()">Add Property</button>
+
+            </div>
+
+        </div>
+
+
+        <div id="properties-container"></div>
+
+    </section>
+
+
+    <!-- MY PURCHASE REQUESTS -->
+    <section id="my-requests-section" class="dashboard-section" style="display: none;">
+        <div class="section-title">
+            <p>YOUR ACTIVITY</p>
+            <h2>My Purchase Requests</h2>
+        </div>
+        <div id="my-requests-container" class="dashboard-container"></div>
+    </section>
+
+
+    <!-- PURCHASE REQUESTS MANAGEMENT -->
+    <section id="owner-requests-section" class="dashboard-section" style="display: none;">
+        <div class="section-title">
+            <p>MANAGEMENT</p>
+            <h2 id="owner-requests-title">Purchase Requests</h2>
+        </div>
+        <div id="owner-requests-container" class="dashboard-container"></div>
+    </section>
+
+
+    <!-- USERS MANAGEMENT (Admin only) -->
+    <section id="users-section" class="dashboard-section" style="display: none;">
+        <div class="section-title">
+            <p>ADMINISTRATION</p>
+            <h2>Users Management</h2>
+        </div>
+        <div id="users-container" class="dashboard-container"></div>
+    </section>
+
+
+    <!-- CONTACT INFORMATION -->
+    <section id="contact" class="contact-section">
+
+        <div class="contact-heading">
+            <p>GET IN TOUCH</p>
+            <h2>Contact Information</h2>
+            <span>Have a question? We're here to help you find your next home.</span>
+        </div>
+
+        <div class="contact-container">
+
+            <!-- EMAIL -->
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <span>✉</span>
+                </div>
+                <h3>Email Us</h3>
+                <p>Have a question? Send us an email.</p>
+                <a href="mailto:Aqari011@gmail.com">Aqari011@gmail.com</a>
+            </div>
+
+            <!-- PHONE -->
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <span>☎</span>
+                </div>
+                <h3>Call Us</h3>
+                <p>We're happy to assist you.</p>
+                <a href="tel:+201002080462">01002080462</a>
+            </div>
+
+            <!-- WHATSAPP -->
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <span>☏</span>
+                </div>
+                <h3>WhatsApp</h3>
+                <p>Contact us directly on WhatsApp.</p>
+                <a href="https://wa.me/201204089004" target="_blank" rel="noopener noreferrer">Chat With Us</a>
+            </div>
+
+            <!-- WORKING HOURS -->
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <span>◷</span>
+                </div>
+                <h3>Working Hours</h3>
+                <p>Available every day</p>
+                <strong>9:00 AM – 9:00 PM</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 ZIZOSTATE. All rights reserved.</p>
+    </footer>
+
+
+    <script src="./script.js"></script>
+
+</body>
+
+</html>
+
